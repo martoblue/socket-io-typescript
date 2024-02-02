@@ -1,5 +1,6 @@
+import 'dotenv/config';
 import express from 'express';
-import { Server as socketIOServer, Socket } from 'socket.io';
+import { Server as SocketIOServer, Socket } from 'socket.io';
 import http from 'http';
 import cors from 'cors';
 
@@ -7,16 +8,17 @@ import cors from 'cors';
 
 const app = express();
 const server = http.createServer(app);
+const port = process.env.PORT ?? 3030;
 
 // Crear una instancia de socket.io para configurar el servidor de WebSocket
 
 // TODO: Habilitar el acceso al cliente, configurar el objeto {}
-const io = new socketIOServer(server, {
+const io = new SocketIOServer(server, {
   cors: {
     origin: '*',
+    methods: ['GET', 'POST'],
   },
 });
-
 app.use(cors());
 
 io.on('connection', (socket: Socket) => {
@@ -32,4 +34,9 @@ io.on('connection', (socket: Socket) => {
   socket.on('disconnect', () => {
     console.log('Client disconnected');
   });
+});
+
+// Iniciar el servidor para escuchar en el puerto 3000
+server.listen(port, () => {
+  console.log(` Listening on port ${port}!`);
 });
